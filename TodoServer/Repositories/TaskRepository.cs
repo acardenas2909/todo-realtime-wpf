@@ -31,9 +31,15 @@ namespace TodoServer.Repositories
 
         public async Task UpdateAsync(TaskEntity task)
         {
-            _context.Entry(task).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            var existing = await _context.Tasks.FindAsync(task.Id);
+            if (existing != null)
+            {
+                // Actualiza campos explícitamente
+                _context.Entry(existing).CurrentValues.SetValues(task);
+                await _context.SaveChangesAsync();
+            }
         }
+
 
         public async Task DeleteAsync(int id)
         {
