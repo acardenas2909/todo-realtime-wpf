@@ -19,9 +19,16 @@
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <local:BoolToTextConverter x:Key="BooleanToTextConverter" /> <!-- Fixed resource key -->
     </Window.Resources>
-    <!-- Usa Grid para estructura -->
     <Grid>
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Botón + formulario -->
+            <RowDefinition Height="*"/>
+            <!-- Lista de tareas con scroll -->
+        </Grid.RowDefinitions>
+
+        <!-- Parte superior -->
+        <StackPanel Grid.Row="0">
             <!-- Botón para mostrar/ocultar formulario -->
             <Button Content="{Binding ShowAddForm, Converter={StaticResource BooleanToTextConverter}}" 
                     Command="{Binding ToggleAddFormCommand}" 
@@ -55,53 +62,116 @@
                 <Button Content="Agregar Tarea" Command="{Binding AddNewTaskCommand}" 
         Margin="0,10,0,0" Background="#007ACC" Foreground="White" Padding="5"/>
             </StackPanel>
-
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <ListView ItemsSource="{Binding Tasks}"
+        </StackPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ListView ItemsSource="{Binding Tasks}"
           Background="Transparent"
           BorderThickness="0"
-          HorizontalAlignment="Stretch"
-          Width="Auto">
-                    <ListView.ItemTemplate>
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          Grid.Row="1"
+          Margin="10">
+                <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Border 
-    HorizontalAlignment="Stretch" 
-    Padding="15" 
-    Margin="5" 
-    BorderBrush="Gray" 
-    BorderThickness="1" 
-    CornerRadius="8"
-    Background="{Binding IsCompleted, Converter={StaticResource CompletedToBrushConverter}}"
-    Effect="{StaticResource DropShadowEffect}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="Bold" Foreground="DarkSlateBlue"/>
-                                    <TextBlock Text="{Binding Description}" FontSize="14" TextWrapping="Wrap" Margin="0,5,0,0"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                        <TextBlock Text="Prioridad: " FontWeight="Bold"/>
-                                        <TextBlock Text="{Binding Priority}" Margin="5,0"/>
-                                        <TextBlock Text=" | " />
-                                        <TextBlock Text="Completado: " FontWeight="Bold"/>
-                                        <CheckBox IsChecked="{Binding IsCompleted}" Margin="5,0"/>
+                            <Border Padding="40"
+                        Margin="0 10"
+                        CornerRadius="12"
+                        Background="{Binding IsCompleted, Converter={StaticResource CompletedToBrushConverter}}"
+                        Effect="{StaticResource DropShadowEffect}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Title -->
+                                    <TextBlock Text="{Binding Title}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#2D2D30"
+                                   Grid.Row="0"/>
+
+                                    <!-- Description -->
+                                    <TextBlock Text="{Binding Description}"
+                                   FontSize="14"
+                                   Foreground="#4A4A4A"
+                                   TextWrapping="Wrap"
+                                   Margin="0,5,0,0"
+                                   Grid.Row="1"/>
+
+                                    <!-- Status -->
+                                    <StackPanel Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Margin="0,10,0,0"
+                                    VerticalAlignment="Center"
+                                    >
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Prioridad:" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Priority}" Margin="5,0,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Text="|" Foreground="#999"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Completado:" FontWeight="Bold"/>
+                                            <CheckBox IsChecked="{Binding IsCompleted}"
+                                          Margin="5,0,0,0"
+                                          VerticalAlignment="Center"/>
+                                        </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Orientation="Vertical" Margin="0,5,0,0">
-                                        <TextBlock Text="{Binding CreatedAt, StringFormat='Creado: {0:dd/MM/yyyy HH:mm}'}"/>
-                                        <TextBlock Text="{Binding DueDate, StringFormat='Fecha límite: {0:dd/MM/yyyy}'}"/>
-                                        <TextBlock Text="{Binding LastModified, StringFormat='Modificado: {0:dd/MM/yyyy HH:mm}'}"/>
+
+                                    <!-- Dates -->
+                                    <StackPanel Orientation="Vertical"
+                                    Grid.Row="3"
+                                    Margin="0,10,0,0"
+                                    >
+                                        <TextBlock Text="{Binding CreatedAt, StringFormat='Creado: {0:dd/MM/yyyy HH:mm}'}"
+                                       Foreground="#666"/>
+                                        <TextBlock Text="{Binding DueDate, StringFormat='Fecha límite: {0:dd/MM/yyyy}'}"
+                                       Foreground="#666"/>
+                                        <TextBlock Text="{Binding LastModified, StringFormat='Modificado: {0:dd/MM/yyyy HH:mm}'}"
+                                       Foreground="#666"/>
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                                        <Button Content="✔" Command="{Binding DataContext.SaveTaskCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                            CommandParameter="{Binding}" Margin="0,0,5,0"/>
-                                        <Button Content="🗑" Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                            CommandParameter="{Binding}"/>
+
+                                    <!-- Buttons -->
+                                    <StackPanel Orientation="Horizontal"
+                                    Grid.Row="4"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,15,0,0"
+                                    >
+                                        <Button Content="✔"
+                                    Width="30"
+                                    Height="30"
+                                    ToolTip="Guardar"
+                                    FontSize="16"
+                                    Background="#4CAF50"
+                                    Foreground="White"
+                                    BorderBrush="#4CAF50"
+                                    Cursor="Hand"
+                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                    Command="{Binding DataContext.SaveTaskCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    CommandParameter="{Binding}"/>
+
+                                        <Button Content="🗑"
+                                    Width="30"
+                                    Height="30"
+                                    ToolTip="Eliminar"
+                                    FontSize="16"
+                                    Background="#F44336"
+                                    Foreground="White"
+                                    BorderBrush="#F44336"
+                                    Cursor="Hand"
+                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                    Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    CommandParameter="{Binding}"/>
                                     </StackPanel>
-                                </StackPanel>
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-            </ScrollViewer>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
-
 </Window>
 

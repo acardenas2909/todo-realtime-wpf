@@ -107,7 +107,12 @@ namespace WpfTodoApp.ViewModels
             try
             {
                 var createdTask = await _taskApi.CreateAsync(NewTask);
-                // No agregamos manualmente, ya que SignalR notificará automáticamente
+                // Limpiar campos
+                NewTask = new TaskModel();
+                OnPropertyChanged(nameof(NewTask));
+
+                // Ocultar formulario
+                ShowAddForm = false;
             }
             catch (Exception ex)
             {
