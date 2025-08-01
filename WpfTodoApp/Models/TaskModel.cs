@@ -1,23 +1,77 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace WpfTodoApp.Models
 {
     public class TaskModel : INotifyPropertyChanged
     {
-        public int Id { get; set; }
-        public string Description { get; set; }
-        public int Priority { get; set; }
-        public bool IsCompleted { get; set; }
+        private int _id;
+        private string _description;
+        private string _title;
+        private int _priority;
+        private bool _isCompleted;
+        private DateTime _createdAt;
+        private DateTime? _dueDate;
+        private DateTime _lastModified;
 
-        // INotifyPropertyChanged para actualizar la UI automáticamente
+        public int Id
+        {
+            get => _id;
+            set { _id = value; OnPropertyChanged(); }
+        }
+
+
+        public string Description
+        {
+            get => _description;
+            set { _description = value; OnPropertyChanged(); }
+        }
+
+        public int Priority
+        {
+            get => _priority;
+            set { _priority = value; OnPropertyChanged(); }
+        }
+
+        public bool IsCompleted
+        {
+            get => _isCompleted;
+            set { _isCompleted = value; OnPropertyChanged(); }
+        }
+
+        public DateTime CreatedAt
+        {
+            get => _createdAt;
+            set { _createdAt = value; OnPropertyChanged(); }
+        }
+
+        public DateTime? DueDate
+        {
+            get => _dueDate;
+            set { _dueDate = value; OnPropertyChanged(); }
+        }
+
+        public DateTime LastModified
+        {
+            get => _lastModified;
+            set { _lastModified = value; OnPropertyChanged(); }
+        }
+
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                _title = value; OnPropertyChanged();
+            }
+        }
+
+        // INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
+
 }

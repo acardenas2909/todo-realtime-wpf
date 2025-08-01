@@ -21,6 +21,20 @@ namespace WpfTodoApp.Services
             _connection.Start().Wait();
         }
 
+
+        public void SubscribeToChanges(Action<string, object> onChange)
+        {
+            _hub.On("broadcastChange", (string changeType, object task) =>
+            {
+                onChange?.Invoke(changeType, task);
+            });
+        }
+
+        public async Task NotifyChange(string type, object task)
+        {
+            await _hub.Invoke("NotifyChange", type, task);
+        }
+
         public async Task<List<TaskModel>> GetAllTasksAsync() =>
             await _hub.Invoke<List<TaskModel>>("GetAllTasks");
 
@@ -29,6 +43,11 @@ namespace WpfTodoApp.Services
 
         public async Task LockTaskAsync(int taskId) =>
             await _hub.Invoke("LockTask", taskId);
+
+        public async Task DeleteTaskAsync(TaskModel task) =>
+            await _hub.Invoke("DeleteTask", task);
+
+
     }
 
 }
