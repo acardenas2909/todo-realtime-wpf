@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using WpfTodoApp.Models;
 using WpfTodoApp.Services;
@@ -138,9 +139,19 @@ namespace WpfTodoApp.ViewModels
 
         private async Task DeleteTask(TaskModel task)
         {
-            await _taskApi.DeleteAsync(task.Id);
-            await _signalR.NotifyChange("delete", task);
-            await LoadTasks();
+            if (task == null) return;
+
+            var result = MessageBox.Show($"¿Estás seguro de que deseas eliminar la tarea \"{task.Title}\"?",
+                                         "Confirmar eliminación",
+                                         MessageBoxButton.YesNo,
+                                         MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                await _taskApi.DeleteAsync(task.Id);
+                await _signalR.NotifyChange("delete", task);
+                await LoadTasks();
+            }
         }
 
         private async Task LockTask(TaskModel task)

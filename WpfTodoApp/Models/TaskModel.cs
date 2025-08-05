@@ -12,7 +12,6 @@ namespace WpfTodoApp.Models
         private string _title;
         private int _priority;
         private bool _isCompleted;
-        private DateTime _createdAt;
         private DateTime? _dueDate;
         private DateTime _lastModified;
 
@@ -39,12 +38,6 @@ namespace WpfTodoApp.Models
         {
             get => _isCompleted;
             set { _isCompleted = value; OnPropertyChanged(); }
-        }
-
-        public DateTime CreatedAt
-        {
-            get => _createdAt;
-            set { _createdAt = value; OnPropertyChanged(); }
         }
 
         public DateTime? DueDate

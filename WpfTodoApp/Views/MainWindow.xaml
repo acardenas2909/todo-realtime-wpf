@@ -17,7 +17,58 @@
         <DropShadowEffect x:Key="DropShadowEffect" Color="Black" Direction="270" ShadowDepth="1" Opacity="0.2" BlurRadius="4" />
         <local:CompletedToBrushConverter x:Key="CompletedToBrushConverter"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <local:BoolToTextConverter x:Key="BooleanToTextConverter" /> <!-- Fixed resource key -->
+        <local:BoolToTextConverter x:Key="BooleanToTextConverter" />
+        <!-- Estilo animado para botón de guardar -->
+        <Style x:Key="AnimatedPrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="LimeGreen"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="10,10,10,10"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>            
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                        CornerRadius="8"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                     To="1.05" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                     To="1.05" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                     To="1.0" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                     To="1.0" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -30,38 +81,55 @@
         <!-- Parte superior -->
         <StackPanel Grid.Row="0">
             <!-- Botón para mostrar/ocultar formulario -->
-            <Button Content="{Binding ShowAddForm, Converter={StaticResource BooleanToTextConverter}}" 
+            <StackPanel>
+                  <Button Content="{Binding ShowAddForm, Converter={StaticResource BooleanToTextConverter}}" 
                     Command="{Binding ToggleAddFormCommand}" 
-                    Margin="10"
-                    HorizontalAlignment="Left" />
-            <!-- Formulario para agregar nueva tarea -->
-            <!-- Formulario de nueva tarea -->
-            <StackPanel Visibility="{Binding ShowAddForm, Converter={StaticResource BoolToVisibilityConverter}}" 
-                        Margin="10"
-                        Background="White"
-                        Orientation="Vertical">
-                <TextBlock Text="Nueva Tarea" FontSize="20" FontWeight="Bold" Margin="0,0,0,10" Foreground="DarkSlateBlue"/>
-
-                <TextBlock Text="Título:"/>
-                <TextBox Text="{Binding NewTask.Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,10"/>
-
-                <TextBlock Text="Descripción:"/>
-                <TextBox Text="{Binding NewTask.Description, UpdateSourceTrigger=PropertyChanged}" 
-         AcceptsReturn="True" Height="60" Margin="0,5,0,10" TextWrapping="Wrap"/>
-
-                <TextBlock Text="Prioridad:"/>
-                <ComboBox SelectedValue="{Binding NewTask.Priority, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,10">
-                    <ComboBoxItem Content="1" />
-                    <ComboBoxItem Content="2" />
-                    <ComboBoxItem Content="3" />
-                </ComboBox>
-
-                <TextBlock Text="Fecha límite:"/>
-                <DatePicker SelectedDate="{Binding NewTask.DueDate, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,10"/>
-
-                <Button Content="Agregar Tarea" Command="{Binding AddNewTaskCommand}" 
-        Margin="0,10,0,0" Background="#007ACC" Foreground="White" Padding="5"/>
+                    Style="{StaticResource AnimatedPrimaryButton}"
+                    HorizontalAlignment="Right" />
             </StackPanel>
+          
+            <!-- Formulario para agregar nueva tarea -->
+            <Border Background="White"
+        CornerRadius="10"
+        Padding="20"
+        BorderBrush="#DDD"
+        BorderThickness="1"
+        Margin="50,10,50,10"
+        Visibility="{Binding ShowAddForm, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Border.Effect>
+                    <DropShadowEffect Color="Gray"
+                          BlurRadius="8"
+                          ShadowDepth="2"
+                          Opacity="0.3"/>
+                </Border.Effect>
+
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Agrega tu Tarea" FontSize="20" FontWeight="Bold" Margin="0,0,0,10" Foreground="Black"/>
+
+                <TextBlock Text="Título:" FontWeight="Bold"/>
+                <TextBox Text="{Binding NewTask.Title, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5,10"/>
+
+                <TextBlock Text="Descripción:" FontWeight="Bold"/>
+                <TextBox Text="{Binding NewTask.Description, UpdateSourceTrigger=PropertyChanged}" 
+         AcceptsReturn="True" Height="60" Margin="5,5,5,10" TextWrapping="Wrap"/>
+
+                <TextBlock Text="Prioridad:" FontWeight="Bold"/>
+                <ComboBox SelectedValue="{Binding NewTask.Priority, UpdateSourceTrigger=PropertyChanged}" 
+                  SelectedValuePath="Content"
+                  Margin="5,5,5,10">
+                            <ComboBoxItem Content="1" />
+                            <ComboBoxItem Content="2" />
+                            <ComboBoxItem Content="3" />
+                        </ComboBox>
+
+                <TextBlock Text="Fecha límite:" FontWeight="Bold"/>
+                <DatePicker SelectedDate="{Binding NewTask.DueDate, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5,10"/>
+
+                <Button Content="Guardar"
+        Command="{Binding AddNewTaskCommand}"
+        Style="{StaticResource AnimatedPrimaryButton}"/>
+            </StackPanel>
+            </Border>
         </StackPanel>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ListView ItemsSource="{Binding Tasks}"
@@ -126,8 +194,6 @@
                                     Grid.Row="3"
                                     Margin="0,10,0,0"
                                     >
-                                        <TextBlock Text="{Binding CreatedAt, StringFormat='Creado: {0:dd/MM/yyyy HH:mm}'}"
-                                       Foreground="#666"/>
                                         <TextBlock Text="{Binding DueDate, StringFormat='Fecha límite: {0:dd/MM/yyyy}'}"
                                        Foreground="#666"/>
                                         <TextBlock Text="{Binding LastModified, StringFormat='Modificado: {0:dd/MM/yyyy HH:mm}'}"
